@@ -3,6 +3,9 @@ package main
 import "fmt"
 import "math"
 import "math/cmplx"
+import "strconv"
+import "reflect"
+import "runtime"
 
 func variableZeroValue() {
 	var a int
@@ -49,6 +52,32 @@ const (
 	dart
 )
 
+func covertToBin(n int) string {
+    result := ""
+    for ; n > 0; n /=2 {
+		// fmt.Println(n)
+        lsb := n % 2
+        result = strconv.Itoa(lsb) + result
+	}
+	fmt.Println(result)
+	return result
+}
+
+func apply(callback func(int, int) int, a, b int) int {
+    p := reflect.ValueOf(callback).Pointer()
+    opName := runtime.FuncForPC(p).Name()
+    fmt.Printf("calling function %s with args" + "(%d, %d)", opName, a, b)
+
+    return callback(a, b)
+}
+
+func explainPoint()int {
+	var a int = 2
+	var pointA *int = &a
+	*pointA = 3
+	return a
+}
+
 
 func main() {
 	fmt.Println("hello world")
@@ -57,4 +86,9 @@ func main() {
 	variableZeroValue()
 	fmt.Println(aaa)
 	fmt.Println(bbb)
+
+	covertToBin(5)
+	covertToBin(13)
+	fmt.Println(7/3)
+	fmt.Println(explainPoint())
 }
