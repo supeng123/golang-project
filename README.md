@@ -3,7 +3,7 @@ practices for golang,
 
 ## 1.Basic Syntax
 
-#### Variable type
+### Variable type
 ~~~
 var firstNumber int
 var firstString string
@@ -11,7 +11,7 @@ var firstString string
 fmt.Printf("%d %q\n", firstNumber, firstString)
 ~~~
 
-#### Init variable
+### Init variable
 ~~~
 var a, b int = 3, 4
 var s string = "abc"
@@ -30,7 +30,7 @@ fmt.Println(a,b,c,s)
 
 ~~~
 
-#### Build in variable type
+### Build in variable type
 ~~~
 bool, int , string, byte, rune
 
@@ -47,7 +47,7 @@ func euler() {
 
 ~~~
 
-#### Transformation of variable type
+### Transformation of variable type
 ~~~
 func triangle() {
     var a, b int = 3,4
@@ -58,7 +58,7 @@ func triangle() {
 
 ~~~
 
-#### Constants
+### Constants
 ~~~
 //do not need to use float64 to tranform the data type
 func consts() {
@@ -73,7 +73,7 @@ func consts() {
 
 ~~~
 
-#### Enums
+### Enums
 ~~~
 func enums() {
     const (
@@ -96,7 +96,7 @@ func enums() {
 
 ~~~
 
-#### If condition
+### If condition
 ~~~
 func readFile() {
     const fileName = "abc.txt"
@@ -121,7 +121,7 @@ func readFile() {
 
 ~~~
 
-#### Switch
+### Switch
 ~~~
 //without break;
 
@@ -160,7 +160,7 @@ func grade(score int) string {
 
 ~~~
 
-#### For condition
+### For condition
 ~~~
 func covertToBin(n int) string {
     result := ""
@@ -185,7 +185,7 @@ func printFile(filename string) {
 }
 ~~~
 
-#### Functions
+### Functions
 ~~~
 func div(a,b int)(q,r int) {
     return a/b, a%b
@@ -238,7 +238,7 @@ func sum(numbers ...int) int {
 sum(1,3,4,6)
 ~~~
 
-#### Pointer
+### Pointer
 ~~~
 // golang pass the value ,not the referene , so the value can not be changed
 var a int = 2
@@ -253,5 +253,226 @@ func swap(a, b *int) {
 a, b := 3, 4
 swap(&a, &b)
 fmt.Println(a, b)
+
+~~~
+
+### Array
+~~~
+// how to define array
+var arr1 [5]int
+arr2 := [3]int{1,2,33}
+arr3 := [...]int {1,2,3,5,66}
+var grid[4][5] bool
+
+fmt.Println(arr1, arr2, arr3)
+fmt.Println(grid)
+
+//iterate array
+
+for index, value := range arr3 {
+    fmt.Println(index, value)
+}
+
+//array is passed by value, not reference, not change to 100
+func printArray(arr [5]int) {
+	for i, v := range arr {
+		fmt.Println(i,v)
+	}
+	arr[0] = 100
+}
+
+//if you want to change the value, pass it by reference
+func printArray(arr *[5]int) {
+	for i, v := range arr {
+		fmt.Println(i,v)
+	}
+	arr[0] = 100
+}
+~~~
+
+### Slice
+~~~
+//slice is passed by reference,not value, it's a view
+func defineSlice() {
+	arr := [...]int {0,2,356,42,4,5,6}
+	s := arr[2:6]
+	fmt.Println("arr[2:6] =", s)
+	fmt.Println("arr[2:] =", arr[2:])
+	fmt.Println("arr[:6] =", arr[:6])
+	fmt.Println("arr[:] =", arr[:])
+}
+
+func updateSlice(s []int){
+	s[0] = 100
+}
+
+func main() {
+    newArray := [5]int{0,6,4,7,8}
+	newSlice := newArray[1:4]
+	fmt.Println(newSlice)
+	updateSlice(newSlice)
+	fmt.Println(newSlice)
+	fmt.Println(newArray)
+}
+
+//conclusion, pass the slice instead of array to change the value in array
+//without * and length of 5 here
+func printArray(arr []int) {
+	for i, v := range arr {
+		fmt.Println(i,v)
+	}
+	arr[0] = 100
+}
+
+newArray := [5]int{0,6,4,7,8}
+printArray(newArray[:])
+
+
+//when the slice length is larger than the father container, it will look up forward to grandfather container if it's in the capacity, 
+slice can be expanded
+func expandedSlice() {
+    newArray := [7]int{0,6,4,7,8,9,10}
+    sliceOne := newArray[2:5]
+    sliceTwo := sliceOne[3:6]
+    fmt.Println(sliceOne)
+    fmt.Println(sliceTwo)
+}
+//output [4 7 8] [9 10]
+
+//newArray's length will not be changed because of it's defined capacity, but the last elements will be changed
+by the appending operation through slice
+func addElementToSlice() {
+    newArray := [7]int{0,6,4,7,8,9,10}
+    sliceOne := newArray[1:5]
+    s2 = append(sliceOne, 11)
+    s3 = append(s2, 12)
+    s4 = append(s3, 13)
+
+    fmt.Println(newArray)
+}
+//output [0 6 4 7 8 11 12]
+
+//different ways to create slice
+func printSlice(s []int) {
+    fmt.Printf("len=%d, cap=%d\n", len(s), cap(s))
+}
+
+func defineDifferentSlice() {
+     s1 := []int{2,4,6,8}
+     s2 := make([]int,16)
+     s3 := make([]int, 10, 32)
+
+     printSlice(s1)
+     printSlice(s2)
+     printSlice(s3)
+}
+
+//slice copy
+func copySlice(){
+    s2 := []int{2,4,6,8}
+    s3 := make([]int, 10, 32)
+    copy(s2, s3)
+    fmt.Println(s2)
+}
+
+//remove slice from the middle of slice
+func removeSlice() {
+	s2 := []int{2,4,6,8,9,9}
+	s2 = append(s2[:3], s2[4:]...)
+	fmt.Println(s2)
+}
+
+//remove slice from the front of slice
+func removeSliceFromFront() {
+	s2 := []int{2,4,6,8,9,9}
+	front = s2[0]
+	s2 = s2[1:]
+}
+
+//remove slice from the end of slice
+func removeSliceFromEnd() {
+	s2 := []int{2,4,6,8,9,9}
+	tail = s2[len(s2) -1]
+	s2 = s2[:len(s2)-1]
+}
+
+~~~
+
+### Map
+~~~
+// how to define map
+func defineMap() {
+	m := map[string]string {
+		"name": "course",
+		"site": "golang"
+	}
+
+	m2 := make(map[string]int) //m2== empty
+	var m3 = make(map[string]int) //m3 == nil
+
+}
+
+// how to find value in map
+func iteratorMap() {
+	m := map[string]string {
+		"name": "course",
+		"site": "golang"
+	}
+
+	if getName, ok := m["name"]; ok {
+		fmt.Println(getName)
+	} else {
+		fmt.Println("key does not exist")
+	}
+
+	delete(m, "site")
+	if site, ok := m["site"]; ok {
+		fmt.Println("site has been deleted")
+	} else {
+		fmt.Println("site has not been deleted")
+	}
+
+	for key, value range m {
+		fmt.Println(k,v)
+	}
+}
+
+func lengthOfNonRepeatingSubStr(s string) int {
+	lastOccured := make(map[byte]int)
+	start := 0
+	maxlength := 0
+
+	for index, char := range []byte(s) {
+		fmt.Println(index,char)
+		lastI, ok := lastOccured[char]
+		
+		if ok && lastI >= start {
+			fmt.Println("lastI",lastI)
+			start = lastI + 1
+		}
+		if index - start + 1 > maxlength {
+			
+			maxlength = index - start + 1
+			fmt.Println("maxlength:",maxlength)
+		}
+		lastOccured[char] = index
+	}
+
+	return maxlength
+}
+
+//iterate chinese 
+func getChineseLength(s string) {
+	for i, ch := range []rune(s) {
+		fmt.Printf("(%d %c)\n", i, ch)
+	}
+}
+~~~
+
+### Go Path
+~~~
+use "~/.bash_profile" to check the GOPATH
+
+go get github.com/gpmgo/gopm
 
 ~~~
