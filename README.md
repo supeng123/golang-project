@@ -469,10 +469,82 @@ func getChineseLength(s string) {
 }
 ~~~
 
+### Struct
+~~~
+//define a struct
+type treeNode struct {
+	value int
+	left, right *treeNode
+}
+
+//define the methods of struct, pass the value
+func (node treeNode) print() {
+	fmt.Println(node.value)
+}
+
+//define the methods of struct, pass the reference
+func (node *treeNode) setValue(value int) {
+	//need to pass the reference to change the value
+	node.value = value
+}
+
+func createNode(value int) *treeNode {
+	//return the address of the local area, save it on stack
+	return &treeNode{value: value}
+}
+
+func defineTreeNodes() {
+	var root treeNode
+	root = treeNode{value: 3}
+	root.left = &treeNode{value: 4}
+	root.right = &treeNode{5, nil, nil}
+	root.right.left = new(treeNode)
+	root.left.right = createNode(2)
+
+	nodes := []treeNode {
+		{value: 3},
+		{},
+		{6, nil, &root},
+	}
+	fmt.Println(nodes)
+	fmt.Println(root)
+	root.print()
+
+	root.right.left.setValue(4)
+	root.right.left.print()
+
+	pRoot := &root
+	pRoot.setValue(300)
+	pRoot.print()
+}
+
+entend struct TreeNode
+type myTreeNode struct {
+	node *tree.TreeNode
+}
+
+func (myNode *myTreeNode) posterOrder(){
+	if myNode == nil || myNode.node == nil{
+		return
+	}
+	left := myTreeNode{myNode.node.Left}
+	left.posterOrder()
+	right := myTreeNode{myNode.node.Right}
+	right.posterOrder()
+	myNode.node.Print()
+}
+~~~
+
 ### Go Path
 ~~~
 use "~/.bash_profile" to check the GOPATH
 
 go get github.com/gpmgo/gopm
+
+~~~
+
+### Package
+~~~
+public if the first letter is capital
 
 ~~~
