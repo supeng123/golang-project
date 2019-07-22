@@ -548,3 +548,81 @@ go get github.com/gpmgo/gopm
 public if the first letter is capital
 
 ~~~
+
+### Interface
+~~~
+//define interface and it's function
+type Retriever interface {
+	Get(urr string)string
+}
+
+func download(r Retriever) string {
+	return r.Get("http://www.google.com")
+}
+
+//define another class to implement this interface
+type Retriever struct {
+	UserAgent string
+	TimeOut time.Duration
+}
+
+func (r Retriever) Get(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	result, err := httputil.DumpResponse(resp, true)
+
+	resp.Body.Close()
+	if err != nil {
+		panic(err)
+	}
+	return string(result)
+}
+//check the class
+var r2 Retriever
+r2 = real.Retriever{
+    UserAgent: "Chrome",
+    TimeOut: time.Minute,
+}
+fmt.Printf("%T %v\n", r2, r2)
+
+**two ways to check the interface type
+**r.(type)
+**r.(int|class|string), r needs to be interface
+func inspect(r Retriever) {
+	switch v := r.(type) {
+	case mock.Retriever:
+		fmt.Println("conent",v.Content)
+	case *real.Retriever:
+		fmt.Println("useragent", v.UserAgent)
+	}
+}
+//check the type
+if mockRetriever, ok:= r.(mock.Retriever); ok {
+    fmt.Println(mockRetriever.Content)
+}
+
+//mixin interface
+type Retriever interface {
+	Get(urr string)string
+}
+type Poster interface {
+	Post(url string, 
+		form map[string]string) string
+}
+
+type RetrieverPoster interface {
+	Retriever
+	Poster
+}
+
+func session(s RetrieverPoster) {
+	s.Get("http://sina.com")
+	s.Post("sup", map[string]string{
+		"name": "slogan",
+		"course": "golang",
+	})
+}
+
+~~~
