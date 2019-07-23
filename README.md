@@ -626,3 +626,72 @@ func session(s RetrieverPoster) {
 }
 
 ~~~
+
+### Functional programing
+~~~
+func adder () func(int) int {
+	sum := 0;
+	return func(v int) int {
+		sum += v
+		return sum
+	}
+}
+
+//Alternative way to write closure
+type iAdd func(int) (int, iAdd)
+
+func adderTwo(base int) iAdd{
+	return func(v int) (int, iAdd) {
+		return base + v, adderTwo(base + v)
+	}
+}
+
+type Node struct {
+	Value int
+	Left, Right *Node
+}
+
+func (node *Node) Traverse() {
+    node.TraverseFunc(func(n * Node){
+        n.Print()
+    })
+    fmt.Println()
+}
+
+func (node *Node) TraverseFunc(f func(*Node)) {
+    if node == nil {
+        return
+    }
+    node.Left.TraverseFunc(f)
+    f(node)
+    node.Right.TraverseFunc(f)
+})
+
+func main() {
+	a := adder()
+
+	for i := 0; i < 10 ; i++ {
+		fmt.Println(a(i))
+	}
+}
+~~~
+
+### Defer
+~~~
+//defer put data in a stack, use defer will not interrupted by panic and other errors
+func tryDefer() {
+    defer fmt.Println(1)
+    defer fmt.Println(2)
+    fmt.Println(2)
+}
+
+func writeFile(filename string){
+    file, err := os.Create(filename)
+    if err != nil{
+        panic(err)
+    }
+    defer file.Close()
+    writer := bufio.NewWriter(file)
+    defer writer.Flush()
+}
+~~~
