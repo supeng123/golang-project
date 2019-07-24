@@ -651,13 +651,6 @@ type Node struct {
 	Left, Right *Node
 }
 
-func (node *Node) Traverse() {
-    node.TraverseFunc(func(n * Node){
-        n.Print()
-    })
-    fmt.Println()
-}
-
 func (node *Node) TraverseFunc(f func(*Node)) {
     if node == nil {
         return
@@ -666,6 +659,15 @@ func (node *Node) TraverseFunc(f func(*Node)) {
     f(node)
     node.Right.TraverseFunc(f)
 })
+
+func (node *Node) Traverse() {
+    node.TraverseFunc(func(n * Node){
+        n.Print()
+    })
+    fmt.Println()
+}
+
+
 
 func main() {
 	a := adder()
@@ -688,10 +690,32 @@ func tryDefer() {
 func writeFile(filename string){
     file, err := os.Create(filename)
     if err != nil{
-        panic(err)
+        <!-- panic(err) -->
+        <!-- err = errors.New("this is customized error") -->
+        <! -- fmt.Println('file exist', err.Error()) -->
+        if pathError, ok := err.(*os.PathError); !ok {
+            panic(err)
+        } else {
+            fmt.Println(pathError.Op, pathError.Path, pathError.Err)
+        }
+        
+        return
     }
     defer file.Close()
     writer := bufio.NewWriter(file)
     defer writer.Flush()
 }
+
+//alternative way to deal with errors
+
+if  err != nil {
+        defer func() {
+            r := recover()
+            if err, ok := r.(error); ok {
+                fmt.Println("Error occured:", err)
+            } else {
+                panic(r)
+            }
+        }()
+    }
 ~~~
