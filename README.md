@@ -294,6 +294,7 @@ func printArray(arr *[5]int) {
 ~~~
 //slice is passed by reference,not value, it's a view
 func defineSlice() {
+    oneSlice := make([]int, 10)
 	arr := [...]int {0,2,356,42,4,5,6}
 	s := arr[2:6]
 	fmt.Println("arr[2:6] =", s)
@@ -718,4 +719,63 @@ if  err != nil {
             }
         }()
     }
+~~~
+
+### Goroutine
+~~~
+spontaneously invoking the anonymous function
+func goRoutine() {
+    for i := 0; i < 10 ; i ++ {
+        go func(i int) {
+            for {
+                fmt.Println("Hello from"+ "%d\n", i)
+                // handover
+                runtime.Gosched()
+            }
+        }(i)
+    }
+    time.Sleep(time.Millisecond)
+}
+~~~
+
+### Channel
+~~~
+ch <- v    // channel reieve value 
+v := <-ch // channel send value
+
+chan<- //use to send
+<-chan //use to recieve
+
+//<-chan used to recieve
+// chan<- used to send data
+func createSendChannel(id int) chan<- int {
+	c := make(chan int)
+	go func() {
+		for {
+			fmt.Println("work %d recieve channel %c\n", id, <-c)
+		}
+	}()
+	return c
+}
+
+func sendChan() {
+	var channels [10]chan<- int
+	for i := 0; i < 10; i++ {
+		channels[i] = createSendChannel(i)
+	}
+
+	for i := 0; i < 10; i++ {
+		//channel send 'a'+i
+		channels[i] <-'a' + i
+	}
+}
+
+func buffChannel() {
+	c := make(chan int, 3)
+	go work(c)
+	c <- 1
+	c <- 2
+	c <- 3
+	close(c)
+}
 ~~~
