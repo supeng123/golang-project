@@ -779,3 +779,66 @@ func buffChannel() {
 	close(c)
 }
 ~~~
+### Select
+~~~
+func generator() chan int{
+    out := make(chan int)
+
+    go func() {
+        for {
+            time.Sleep(time.Duration(rand.Intn(5000)*time.Millisecond))
+            out <- i
+            i ++
+        }
+    }()
+    return out
+}
+
+func useSelect(){
+    var c1, c2 = generator(), generator()
+    select {
+    case n: <-c1:
+    fmt.Println("received from c1:" n)
+    case n: <-c2:
+    fmt.Println("received from c1:" n)
+    case <-time.After(880 * time.Millisecond):
+    fmt.Println("timeout")
+    default:
+    fmt.Println("no value received")
+    }
+}
+
+~~~
+
+### Lock
+~~~
+type atomicInt struct {
+    value int
+    lock sync.Mutex
+}
+
+func (a * atomicInt) increment(){
+
+    func() {
+        a.lock.Lock()
+        defer a.lock.Unlock()
+        a.value ++
+    }()
+    
+}
+
+func (a * atomicInt) get () int {
+    a.lock.Lock()
+    defer a.lock.Unlock()
+    return a.value
+}
+
+func main(){
+    var a atomicInt
+    a.increment()
+    go func(){
+        a.increment()
+    }()
+    fmt.Println(a.get())
+}
+~~~
