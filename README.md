@@ -534,6 +534,8 @@ func (myNode *myTreeNode) posterOrder(){
 	right.posterOrder()
 	myNode.node.Print()
 }
+
+** the properties and properties' pointer in struct is consecutive in ROM, but the referene of the properties' pointer could be dispersed
 ~~~
 
 ### Go Path
@@ -835,6 +837,7 @@ func (a * atomicInt) get () int {
 
 func main(){
     var a atomicInt
+    bb := atomicInt{}
     a.increment()
     go func(){
         a.increment()
