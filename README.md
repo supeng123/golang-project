@@ -519,7 +519,7 @@ func defineTreeNodes() {
 	pRoot.print()
 }
 
-entend struct TreeNode
+//extend struct TreeNode
 type myTreeNode struct {
 	node *tree.TreeNode
 }
@@ -535,7 +535,86 @@ func (myNode *myTreeNode) posterOrder(){
 	myNode.node.Print()
 }
 
-** the properties and properties' pointer in struct is consecutive in ROM, but the referene of the properties' pointer could be dispersed
+=======
+//second example
+type Student struct {
+    Name string
+    Age int
+    Score int
+}
+
+func (s *Student) ShowInfo() {
+    fmt.Println(s.Name)
+}
+
+func (s *Student) SetScore(score int) {
+    s.Score = score
+}
+
+type Graduate struct {
+    //only need to embed the class you want to extend
+    Student
+}
+
+type UnderGraduate struct {
+    Student
+    Name: string
+}
+
+func (* UnderGraduate) SetScore(score int){
+    s.Score = score+ 5
+}
+
+var newGraduate = &Graduate{}
+newGraduate.Student.Name = 'slogan'
+newGraduate.Student.Age = 11
+newGraduate.Student.SetScore(44)
+
+//or it could be simplified, becuase newGraduate does not have Name,Age,SetScore, so it will get all the property from its parent
+newGraduate.Name = 'slogan'
+newGraduate.Age = 11
+newGraduate.SetScore(44)
+
+var newUnderGraduate = &UnderGraduate{}
+newUnderGraduate.Name = 'sunminjuan'
+newUnderGraduate.Age = 11
+newUnderGraduate.SetScore(44)
+
+// will not get 'sunminjuan' because it will get the closest Name in struct Student, the outcome will be empty
+newUnderGraduate.ShowInfo()
+
+
+//serialize struct using tag
+import 'encoding/json'
+
+type Monster struct {
+    Name string `json: "name"`
+    Age string `json: "age"`
+    Skill string `json: "skill"`
+}
+
+jsonString, err = json.Marshal(Monster)
+if err != nil {
+    fmt.Println(string(jsonString))
+
+    fmt.Printf("sum=%v\n", fmt.Sprintf("%.2f", calculator.getsum()))
+}
+
+//factory design pattern for go
+type student struct {
+    Name: string,
+    score: float64,
+}
+
+func NewStudent (n string, s float64) *student {
+    return &student{
+        Name: n,
+        score: s,
+    }
+}
+func (s *student) GetScore() float64 {
+    return s.score
+}
 ~~~
 
 ### Go Path
