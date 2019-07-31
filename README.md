@@ -669,6 +669,38 @@ r2 = real.Retriever{
 }
 fmt.Printf("%T %v\n", r2, r2)
 
+//other example
+type Usb interface {
+    Start()
+    Stop()
+}
+
+type Phone struct {
+
+}
+
+func (p *Phone) Start() {
+    fmt.Println("Phone is starting to work")
+}
+
+func (p *Phone) Stop() {
+    fmt.Println("Phone is Stopping to work")
+}
+
+type Computer struct {
+
+}
+
+func (c *Computer) Working(usb Usb) {
+    usb.Start()
+    usb.Stop()
+}
+
+var computer = Computer{}
+var phone = &Phone{}
+computer.Working(phone)
+
+
 **two ways to check the interface type
 **r.(type)
 **r.(int|class|string), r needs to be interface
@@ -685,7 +717,7 @@ if mockRetriever, ok:= r.(mock.Retriever); ok {
     fmt.Println(mockRetriever.Content)
 }
 
-//mixin interface
+//mixin interface,
 type Retriever interface {
 	Get(urr string)string
 }
@@ -694,6 +726,7 @@ type Poster interface {
 		form map[string]string) string
 }
 
+**should not have repeat Post or Get in previous interfaces
 type RetrieverPoster interface {
 	Retriever
 	Poster
