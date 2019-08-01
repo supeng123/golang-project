@@ -957,3 +957,159 @@ func main(){
     fmt.Println(a.get())
 }
 ~~~
+
+## Golang File
+~~~
+import "os"
+
+func openFile(distName){
+    if file, err := os.Open("d:/text.txt"); err != nil {
+        fmt.Println(err)
+    }
+    fmt.Printf("file=%v", file)
+
+    err = file.Close()
+    if err != nil {
+        fmt.Println(err)
+    }
+}
+
+//open file in buff
+import "bufio"
+import "io"
+func openFile(distName){
+    if file, err := os.Open("d:/text.txt"); err != nil {
+        fmt.Println(err)
+    }
+
+    defer file.Close()
+    reader := bufio.NewReader(file)
+    for {
+        str, err := reader.ReadString('\n')
+        if err == io.EOF {
+            break
+        }
+
+    }
+}
+
+//open small file at once
+import "io/ioutil"
+func openFile(distName){
+    content, err := ioutil.ReadFile("d:/text.txt")
+    if err != nil {
+        fmt.Println("err")
+    }
+    fmt.Printf("%v", string(content))
+}
+
+//write file
+import "os"
+import "bufio"
+
+func writeFile(fileDistName){
+    file, err := os.OpenFile(fileDistName, os.O_WRONLY | os.O_CREATE, 0666)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer file.Close()
+    str := "hello ,slogan\r\n"
+    writer := bufio.NewWriter(file)
+    for i:=0; i< 5 ; i++ {
+        writer.WriteString(str)
+    }
+    writer.Flush()
+}
+
+//change the old file
+func writeFile(fileDistName){
+    file, err := os.OpenFile(fileDistName, os.O_WRONLY | os.TRUNC, 0666)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer file.Close()
+    str := "hello ,slogan\r\n"
+    writer := bufio.NewWriter(file)
+    for i:=0; i< 5 ; i++ {
+        writer.WriteString(str)
+    }
+    writer.Flush()
+}
+
+//append to the old file
+func writeFile(fileDistName){
+    file, err := os.OpenFile(fileDistName, os.O_RDONLY | os.APPEND, 0666)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer file.Close()
+    str := "hello ,slogan\r\n"
+    writer := bufio.NewWriter(file)
+    for i:=0; i< 5 ; i++ {
+        writer.WriteString(str)
+    }
+    writer.Flush()
+}
+
+//use ioutil to read and write file
+import "os"
+import "io/ioutil"
+
+func writeFile () {
+    file1Path := "d:/abc.txt"
+    file2Path := "e:/edf.txt"
+
+    data, err := ioutil.ReadFile(file1path)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    err := ioutil.WriteFile(file2Path, data, 0666)
+    if (err != nil) {
+        fmt.Println(err)
+    }
+}
+
+//check if file exist
+func PathExist(path string)(bool, error) {
+    _, err := os.Stat(path)
+    if err == nil {
+        return true, nil
+    }
+    if os.IsNotExist(err){
+        return false, nil
+    }
+    return false, err
+}
+
+//copy file
+func CopeFile(dstFilename string, srcFilename string)(written int64, err error) {
+    srcFile, err := os.Open(srcFilename)
+    if err != nil{
+        fmt.Println(err)
+    }
+
+    defer srcFile.Close()
+
+    reader := bufio.NewReader(srcFile)
+    dstfile, err := os.OpenFile(dstFilename, os.O_WRONLY | os.O_CREATE, 0666)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    defer dstFile.Close()
+
+    writer := bufio.NewWriter(dstfile)
+    return io.Copy(writer, reader)
+}
+
+//transform to Chinese
+str = []rune(str)
+
+//os.Args get the command line arguments
+//flag package to parse the command line arguments
+~~~
