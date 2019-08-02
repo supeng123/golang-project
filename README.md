@@ -850,6 +850,15 @@ func goRoutine() {
     }
     time.Sleep(time.Millisecond)
 }
+
+//main go routine have multiple small routine, it's light weight threading
+import "runtime"
+func useMultipleCPU() {
+    cupNumber := runtime.NumCPU()
+    runtime.GOMAXPROCS(number - 1)
+}
+
+// when the main string ended? how the multiple sub threading using the same source
 ~~~
 
 ### Channel
@@ -891,6 +900,22 @@ func buffChannel() {
 	c <- 2
 	c <- 3
 	close(c)
+}
+
+//second example
+func channelDefined() {
+    var intChan chan int
+    intChan = make(chan int, 3)
+    //channel write int 10
+    intChan <- 10
+    intChan <- 20
+
+    //get the int from the channel
+    var num2 int
+    num2 = <-intChan
+    fmt.Println(num2)// 10
+    num3 := <-intChan // 20
+
 }
 ~~~
 ### Select
