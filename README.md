@@ -917,6 +917,143 @@ func channelDefined() {
     num3 := <-intChan // 20
 
 }
+
+mapChan := make(chan map[string]string, 10)
+m1 := make(map[string]string, 20)
+m1["city1"] = "beijijng"
+m1["city2"] = "chongqin"
+
+mapchan <- m1
+
+//channel put all types of data
+var allChan chan interface{}
+allChan = make(chan interface{}, 10)
+
+cat1 := Cat{Name: "tom", Age: 18}
+allChan <- cat1;
+allChan <- 10
+allChan <- "Jack"
+
+cat11 := <-allChan
+//type interface is empty with no methods
+fmt.Println(cat11.Name) //error
+//use type assertion
+a := newCat.(Cat)
+fmt.Println(a.Name)
+
+//close the channel, can't write any thing,but it can be read
+Close(allChan)
+
+//iterator channel
+intChan2 := make(chan int, 10)
+for i := 0; i < 100; i++ {
+    intChan2 <- i*2
+}
+// need to close channel otherwise it will be deadlocked
+close(intChan2)
+for v := range intChan2 {
+    fmt.Println("v=", v)
+}
+
+
+//practice goroutine with channel
+intChan = make(chan int, 50)
+exitChan = make(chan int, 1)
+
+go writeData()
+go readData()
+
+for {
+    _, ok := <-exitChan
+    if !ok {
+        break
+    }
+}
+
+func writeData(intChan chan int) {
+    for i := 0; i < 50; i++ {
+        intChan <- i
+    }
+    close(intChan)
+}
+
+func readChan(intChan chan int, exitChan chan bool){
+    for {
+        v, ok := <-intChan
+        if !ok {
+            break
+        }
+        fmt.Println("read Data =%V", v)
+    }
+    exitChan <- true
+    close(exitChan)
+}
+
+//practice 2
+
+func putNum(intChan chan int){
+    for i := 0; i < 8000; i++ {
+        intChan <- i
+    }
+    close(intChan)
+}
+
+func primeNum(intChan chan int, primeChan chan int, exitChan chan bool) {
+    var flag bool
+    for {
+        num, ok := <-intChan
+        if !ok {
+            break
+        }
+
+        flag = true
+        //check if it's a prime
+        for i := 2; i < num; i++ {
+            if num%i == 0 {
+                flag = false
+                break
+            }
+        }
+
+        if flag {
+            primeChan <- num
+        }
+    }
+
+    exitChan <- true
+}
+
+func main() {
+    intChan := make(chan int, 1000)
+    primeChan := make(chan int, 2000)
+    //flag chan
+    exitChan := make(chan bool, 4)
+
+    go putNum(intChan)
+
+    for i := 0; i < 4; i++ {
+        go primeNum(intChan, primeChan, exitChan)
+    }
+
+    go func() {
+        for i := 0; i < 4; i++ {
+                <-exitChan
+            }
+
+        close(primeChan)
+    }()
+
+    for {
+        res, ok := <- primeChan
+        if !ok {
+            break
+        }
+        fmt.Println("primeNum:%v\n", res)
+    }
+}
+    
+
+
 ~~~
 ### Select
 ~~~
