@@ -1072,16 +1072,21 @@ func generator() chan int{
 
 func useSelect(){
     var c1, c2 = generator(), generator()
-    select {
-    case n: <-c1:
-    fmt.Println("received from c1:" n)
-    case n: <-c2:
-    fmt.Println("received from c1:" n)
-    case <-time.After(880 * time.Millisecond):
-    fmt.Println("timeout")
-    default:
-    fmt.Println("no value received")
+
+    for {
+        select {
+            case n:= <-c1:
+            fmt.Println("received from c1:" n)
+            case n:= <-c2:
+            fmt.Println("received from c1:" n)
+            case <-time.After(880 * time.Millisecond):
+            fmt.Println("timeout")
+            default:
+            fmt.Println("no value received")
+            return
+        }
     }
+    
 }
 
 ~~~
@@ -1117,6 +1122,139 @@ func main(){
         a.increment()
     }()
     fmt.Println(a.get())
+}
+~~~
+
+## Reflect
+~~~
+reflect.TypeOf()
+reflect.ValueOf()
+
+func test (b interface{}) {
+    //get the type of the argument
+    rType := reflect.TypeOf(b)
+
+    //get the value of the argument
+    rVal := reflect.ValueOf(b)
+    //get the true value if the type is Int
+    trueValue := rVal.Int()
+
+    //change the Int argument back
+    iVal := rVal.Interface()
+    //put the parameter int for int value 10
+    num2 := iVal.(int)
+}
+
+//other example for struct
+type Student struct {
+    name String
+    Age int
+}
+
+func testStruct (b interface{}) {
+    rType := reflect.TypeOf(b)
+
+    rVal := reflect.ValueOf(b)
+
+    iVal := rVal.Interface()
+
+    //get the kind
+    kind1 := rVal.Kind()
+
+    //need type assert before output the value
+    assertType := TypeJudge(iVal)
+    //or
+    stu. ok := iVal.(Student)
+    if ok {
+        fmt.Printf("stu.Name=%v\n", stu.Name)
+    }
+
+}
+
+func TypeJudge(items ...interface{}) {
+    for i, x := range items {
+        switch x.(type) {
+            case bool:
+                fmt.Print("param %d is a bool , value is %v\n", i, x)
+            case float64:
+                fmt.Print("param %d is a float64 , value is %v\n", i, x)
+            case int, int64:
+                fmt.Print("param %d is a int64 , value is %v\n", i, x)
+            case nil:
+                fmt.Print("param %d is a nil , value is %v\n", i, x)
+            case string:
+                fmt.Print("param %d is a string , value is %v\n", i, x)
+            default:
+                fmt.Print("param %d is a unknown , value is %v\n", i, x)
+        }
+    }
+}
+
+//change the int pointer
+a  := 10
+rVal := reflect.Value(&a)
+rVal.Elem().setInt(20)
+
+//best practice
+
+type Monster struct {
+    Name strig `json: "name"`
+    Age int `json:"monster_age"`
+    Score float32
+    Sex string
+}
+
+func (s Monster) Print () {
+    fmt.Println(s)
+}
+
+func (s Monster) GetSum (n1, n2 int) int {
+    return n1 + n2
+}
+
+func (s Monster) Set(name string, age int,score flat32, sex string) {
+    s.Name = name
+    s.Age = age
+    s.Score = score
+    s.Sex = sex
+}
+
+func TestStruct (a interface{}) {
+    typ := reflect.TypeOf(a)
+    val := reflect.ValueOf(a)
+    kd := val.Kind()
+    if kd != reflect.Struct {
+        fmt.Println("expect struct")
+        return
+    }
+
+    //get the number of properties
+    num := val.NumField()
+
+    for i := 0; i < num ; i++ {
+        fmt.Println("Field %d: value is %v\n", i, val.Field(i))
+
+        //get the tag
+        tagVal := typ.Field(i).Tag.Get("json")
+        if tagVal != "" {
+            fmt.Println("Field %d: tage is = %v\n", i, tagVal)
+        }
+    }
+
+    //get the number of methods
+    numOfMethod := val.NumMethod()
+
+    val.Method(1).Call(nil)
+
+    //invoke the first method inside the struct
+    //the index based on the first letter in order
+    var params []reflect.Value
+    params = append(params, reflect.ValueOf(10))
+    params = append(params, reflect.ValueOf(20))
+
+    res := val.Method(0).Call(params)
+    fmt.Println("res=", res[0].Int())
+
 }
 ~~~
 
