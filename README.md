@@ -7,7 +7,6 @@ practices for golang,
 ~~~
 var firstNumber int
 var firstString string
-
 fmt.Printf("%d %q\n", firstNumber, firstString)
 ~~~
 
@@ -55,7 +54,6 @@ func triangle() {
     c = int(math.Sqrt(float64(a*a + b*b)))
     fmt.Println(c)
 }
-
 ~~~
 
 ### Constants
@@ -74,6 +72,7 @@ func consts() {
 ~~~
 
 ### Enums
+#### use brackets
 ~~~
 func enums() {
     const (
@@ -82,9 +81,9 @@ func enums() {
         golang = 3
         dart = 4
     )
-
-    or 
-
+~~~
+#### use iota
+~~~
     const (
         python = iota
         javascript
@@ -93,10 +92,11 @@ func enums() {
     )
     fmt.Println(python, javascript, golang, dart)
 }
-
 ~~~
 
 ### If condition
+
+#### normal way to define If
 ~~~
 func readFile() {
     const fileName = "abc.txt"
@@ -107,8 +107,10 @@ func readFile() {
         fmt.Printf("%s\n", contents)
     }
 }
+~~~
 
-//alternative way
+#### alternative way to define If
+~~~
 func readFile() {
     const fileName = "abc.txt"
     if contents, err := ioutil.ReadFile(fileName); err != nil {
@@ -116,15 +118,15 @@ func readFile() {
     } else {
         fmt.Printf("%s\n", contents)
     }
-    //fmt.Printf("%s\n", contents), can not get contents becuase it's wraped in if condition
+    fmt.Printf("%s\n", contents)
+    //can not get contents becuase it's wraped in if condition
 }
-
 ~~~
 
 ### Switch
-~~~
-//without break;
 
+#### without break
+~~~
 func eval(a, b int, op string) int {
     var result int
     switch op {
@@ -141,8 +143,9 @@ func eval(a, b int, op string) int {
     }
     return result
 }
-
-//without condition after switch
+~~~
+#### without condition after switch
+~~~
 func grade(score int) string {
     g := ''
     switch {
@@ -161,6 +164,8 @@ func grade(score int) string {
 ~~~
 
 ### For condition
+
+#### normal way use for
 ~~~
 func covertToBin(n int) string {
     result := ""
@@ -170,8 +175,9 @@ func covertToBin(n int) string {
     }
     return result
 }
-
-//for uses as while
+~~~
+#### for uses as while
+~~~
 func printFile(filename string) {
     file, err := os.Open(filename)
     if err != nil {
@@ -186,12 +192,16 @@ func printFile(filename string) {
 ~~~
 
 ### Functions
+
+#### normal way declare function
 ~~~
+
 func div(a,b int)(q,r int) {
     return a/b, a%b
 }
-
-//alternative way
+~~~
+#### alternative way declare function
+~~~
 func div(a,b int)(q,r int) {
     q = a / b
     r = a % b
@@ -199,7 +209,9 @@ func div(a,b int)(q,r int) {
 }
 
 q, r := div(13, 4)
-//only use one output
+~~~
+#### only use one output
+~~~
 q, _ := div(15, 8)
 
 func eval(a,b int, op string)(int, error) {
@@ -217,7 +229,9 @@ func eval(a,b int, op string)(int, error) {
         return 0, fmt.Errorf("unsupported operation: %s", op)
     }
 }
-
+~~~
+#### use function in function
+~~~
 func apply(callback func(int, int) int, a, b int) int {
     p := reflect.ValueOf(op).Pointer()
     opName := runtime.FuncForPC(p).Name()
@@ -226,7 +240,9 @@ func apply(callback func(int, int) int, a, b int) int {
     return callback(a, b)
 }
 
-//rest arguments
+~~~
+#### use rest arguments
+~~~
 func sum(numbers ...int) int {
     s := 0
     for i := range numbers {
@@ -237,6 +253,7 @@ func sum(numbers ...int) int {
 
 sum(1,3,4,6)
 ~~~
+
 
 ### Pointer
 ~~~
@@ -267,12 +284,14 @@ var grid[4][5] bool
 fmt.Println(arr1, arr2, arr3)
 fmt.Println(grid)
 
-//iterate array
+
+~~~
+#### traverse array
+~~~
 
 for index, value := range arr3 {
     fmt.Println(index, value)
 }
-
 //array is passed by value, not reference, not change to 100
 func printArray(arr [5]int) {
 	for i, v := range arr {
@@ -316,6 +335,10 @@ func main() {
 	fmt.Println(newArray)
 }
 
+~~~
+#### change the value in slice
+~~~
+
 //conclusion, pass the slice instead of array to change the value in array
 //without * and length of 5 here
 func printArray(arr []int) {
@@ -328,6 +351,9 @@ func printArray(arr []int) {
 newArray := [5]int{0,6,4,7,8}
 printArray(newArray[:])
 
+~~~
+#### slice capacity and length
+~~~
 
 //when the slice length is larger than the father container, it will look up forward to grandfather container if it's in the capacity, 
 slice can be expanded
@@ -353,7 +379,10 @@ func addElementToSlice() {
 }
 //output [0 6 4 7 8 11 12]
 
-//different ways to create slice
+
+~~~
+#### different ways to create slice
+~~~
 func printSlice(s []int) {
     fmt.Printf("len=%d, cap=%d\n", len(s), cap(s))
 }
@@ -368,7 +397,9 @@ func defineDifferentSlice() {
      printSlice(s3)
 }
 
-//slice copy
+~~~
+#### copy slice
+~~~
 func copySlice(){
     s2 := []int{2,4,6,8}
     s3 := make([]int, 10, 32)
@@ -376,32 +407,40 @@ func copySlice(){
     fmt.Println(s2)
 }
 
-//remove slice from the middle of slice
+~~~
+#### remove slice from the middle of slice
+~~~
+
 func removeSlice() {
 	s2 := []int{2,4,6,8,9,9}
 	s2 = append(s2[:3], s2[4:]...)
 	fmt.Println(s2)
 }
 
-//remove slice from the front of slice
+~~~
+#### remove slice from the front of slice
+~~~
+
 func removeSliceFromFront() {
 	s2 := []int{2,4,6,8,9,9}
 	front = s2[0]
 	s2 = s2[1:]
 }
 
-//remove slice from the end of slice
+~~~
+#### remove slice from the end of slice
+~~~
 func removeSliceFromEnd() {
 	s2 := []int{2,4,6,8,9,9}
 	tail = s2[len(s2) -1]
 	s2 = s2[:len(s2)-1]
 }
-
 ~~~
 
 ### Map
+
+#### define map
 ~~~
-// how to define map
 func defineMap() {
 	m := map[string]string {
 		"name": "course",
@@ -413,7 +452,9 @@ func defineMap() {
 
 }
 
-// how to find value in map
+~~~
+#### find value in map
+~~~
 func iteratorMap() {
 	m := map[string]string {
 		"name": "course",
@@ -462,7 +503,9 @@ func lengthOfNonRepeatingSubStr(s string) int {
 	return maxlength
 }
 
-//iterate chinese 
+~~~
+#### traverse chinese in map
+~~~
 func getChineseLength(s string) {
 	for i, ch := range []rune(s) {
 		fmt.Printf("(%d %c)\n", i, ch)
@@ -471,8 +514,9 @@ func getChineseLength(s string) {
 ~~~
 
 ### Struct
+
+#### define a struct
 ~~~
-//define a struct
 type treeNode struct {
 	value int
 	left, right *treeNode
@@ -519,7 +563,10 @@ func defineTreeNodes() {
 	pRoot.print()
 }
 
-//extend struct TreeNode
+
+~~~
+#### extend struct TreeNode
+~~~
 type myTreeNode struct {
 	node *tree.TreeNode
 }
@@ -535,8 +582,9 @@ func (myNode *myTreeNode) posterOrder(){
 	myNode.node.Print()
 }
 
-=======
-//second example
+~~~
+#### second example about struct
+~~~
 type Student struct {
     Name string
     Age int
@@ -584,7 +632,9 @@ newUnderGraduate.SetScore(44)
 newUnderGraduate.ShowInfo()
 
 
-//serialize struct using tag
+~~~
+#### serialize struct using tag
+~~~
 import 'encoding/json'
 
 type Monster struct {
@@ -600,7 +650,9 @@ if err != nil {
     fmt.Printf("sum=%v\n", fmt.Sprintf("%.2f", calculator.getsum()))
 }
 
-//factory design pattern for go
+~~~
+#### factory design pattern for go
+~~~
 type student struct {
     Name: string,
     score: float64,
@@ -620,15 +672,12 @@ func (s *student) GetScore() float64 {
 ### Go Path
 ~~~
 use "~/.bash_profile" to check the GOPATH
-
 go get github.com/gpmgo/gopm
-
 ~~~
 
 ### Package
 ~~~
 public if the first letter is capital
-
 ~~~
 
 ### Interface
@@ -661,6 +710,7 @@ func (r Retriever) Get(url string) string {
 	}
 	return string(result)
 }
+
 //check the class
 var r2 Retriever
 r2 = real.Retriever{
@@ -668,8 +718,10 @@ r2 = real.Retriever{
     TimeOut: time.Minute,
 }
 fmt.Printf("%T %v\n", r2, r2)
+~~~
 
-//other example
+#### other example for interface
+~~~
 type Usb interface {
     Start()
     Stop()
@@ -699,9 +751,11 @@ func (c *Computer) Working(usb Usb) {
 var computer = Computer{}
 var phone = &Phone{}
 computer.Working(phone)
+~~~
 
+#### two ways to check the interface type
+~~~
 
-**two ways to check the interface type
 **r.(type)
 **r.(int|class|string), r needs to be interface
 func inspect(r Retriever) {
@@ -717,7 +771,10 @@ if mockRetriever, ok:= r.(mock.Retriever); ok {
     fmt.Println(mockRetriever.Content)
 }
 
-//mixin interface,
+~~~
+
+#### mixin interface
+~~~
 type Retriever interface {
 	Get(urr string)string
 }
@@ -743,6 +800,8 @@ func session(s RetrieverPoster) {
 ~~~
 
 ### Functional programing
+
+#### normal way to declare closure
 ~~~
 func adder () func(int) int {
 	sum := 0;
@@ -752,7 +811,9 @@ func adder () func(int) int {
 	}
 }
 
-//Alternative way to write closure
+~~~
+#### Alternative way to declare closure
+~~~
 type iAdd func(int) (int, iAdd)
 
 func adderTwo(base int) iAdd{
@@ -782,8 +843,6 @@ func (node *Node) Traverse() {
     fmt.Println()
 }
 
-
-
 func main() {
 	a := adder()
 
@@ -794,6 +853,7 @@ func main() {
 ~~~
 
 ### Defer
+#### normal way to deal with errors using defer
 ~~~
 //defer put data in a stack, use defer will not interrupted by panic and other errors
 func tryDefer() {
@@ -820,8 +880,9 @@ func writeFile(filename string){
     writer := bufio.NewWriter(file)
     defer writer.Flush()
 }
-
-//alternative way to deal with errors
+~~~
+#### alternative way to deal with errors using defer
+~~~
 
 if  err != nil {
         defer func() {
@@ -862,6 +923,8 @@ func useMultipleCPU() {
 ~~~
 
 ### Channel
+
+#### define send channel and receive channel
 ~~~
 ch <- v    // channel reieve value 
 v := <-ch // channel send value
@@ -901,8 +964,9 @@ func buffChannel() {
 	c <- 3
 	close(c)
 }
-
-//second example
+~~~
+#### second example about send channel and receive channel
+~~~
 func channelDefined() {
     var intChan chan int
     intChan = make(chan int, 3)
@@ -925,7 +989,9 @@ m1["city2"] = "chongqin"
 
 mapchan <- m1
 
-//channel put all types of data
+~~~
+#### channel put all types of data
+~~~
 var allChan chan interface{}
 allChan = make(chan interface{}, 10)
 
@@ -944,7 +1010,9 @@ fmt.Println(a.Name)
 //close the channel, can't write any thing,but it can be read
 Close(allChan)
 
-//iterator channel
+~~~
+#### traverse channel
+~~~
 intChan2 := make(chan int, 10)
 for i := 0; i < 100; i++ {
     intChan2 <- i*2
@@ -955,8 +1023,9 @@ for v := range intChan2 {
     fmt.Println("v=", v)
 }
 
-
-//practice goroutine with channel
+~~~
+#### practice goroutine with channel
+~~~
 intChan = make(chan int, 50)
 exitChan = make(chan int, 1)
 
@@ -989,8 +1058,9 @@ func readChan(intChan chan int, exitChan chan bool){
     close(exitChan)
 }
 
-//practice 2
-
+~~~
+#### other practice goroutine with channel
+~~~
 func putNum(intChan chan int){
     for i := 0; i < 8000; i++ {
         intChan <- i
@@ -1125,7 +1195,8 @@ func main(){
 }
 ~~~
 
-## Reflect
+### Reflect
+#### declare reflect
 ~~~
 reflect.TypeOf()
 reflect.ValueOf()
@@ -1144,8 +1215,9 @@ func test (b interface{}) {
     //put the parameter int for int value 10
     num2 := iVal.(int)
 }
-
-//other example for struct
+~~~
+#### other example for struct in reflect
+~~~
 type Student struct {
     name String
     Age int
@@ -1190,12 +1262,16 @@ func TypeJudge(items ...interface{}) {
     }
 }
 
-//change the int pointer
+~~~
+#### use reflect changing the int pointer
+~~~
 a  := 10
 rVal := reflect.Value(&a)
 rVal.Elem().setInt(20)
 
-//best practice
+~~~
+#### prcatice about reflect
+~~~
 
 type Monster struct {
     Name strig `json: "name"`
@@ -1258,7 +1334,8 @@ func TestStruct (a interface{}) {
 }
 ~~~
 
-## Golang File
+### Golang File
+#### normal way to get file
 ~~~
 import "os"
 
@@ -1274,7 +1351,9 @@ func openFile(distName){
     }
 }
 
-//open file in buff
+~~~
+#### open file in buff
+~~~
 import "bufio"
 import "io"
 func openFile(distName){
@@ -1293,7 +1372,9 @@ func openFile(distName){
     }
 }
 
-//open small file at once
+~~~
+#### open small file at once
+~~~
 import "io/ioutil"
 func openFile(distName){
     content, err := ioutil.ReadFile("d:/text.txt")
@@ -1303,7 +1384,9 @@ func openFile(distName){
     fmt.Printf("%v", string(content))
 }
 
-//write file
+~~~
+#### write file
+~~~
 import "os"
 import "bufio"
 
@@ -1322,7 +1405,9 @@ func writeFile(fileDistName){
     writer.Flush()
 }
 
-//change the old file
+~~~
+#### change the old file
+~~~
 func writeFile(fileDistName){
     file, err := os.OpenFile(fileDistName, os.O_WRONLY | os.TRUNC, 0666)
     if err != nil {
@@ -1338,7 +1423,9 @@ func writeFile(fileDistName){
     writer.Flush()
 }
 
-//append to the old file
+~~~
+#### append one file to the old file
+~~~
 func writeFile(fileDistName){
     file, err := os.OpenFile(fileDistName, os.O_RDONLY | os.APPEND, 0666)
     if err != nil {
@@ -1354,7 +1441,9 @@ func writeFile(fileDistName){
     writer.Flush()
 }
 
-//use ioutil to read and write file
+~~~
+#### use ioutil to read and write file
+~~~
 import "os"
 import "io/ioutil"
 
@@ -1372,8 +1461,9 @@ func writeFile () {
         fmt.Println(err)
     }
 }
-
-//check if file exist
+~~~
+#### check if file exist
+~~~
 func PathExist(path string)(bool, error) {
     _, err := os.Stat(path)
     if err == nil {
@@ -1385,7 +1475,9 @@ func PathExist(path string)(bool, error) {
     return false, err
 }
 
-//copy file
+~~~
+#### copy file
+~~~
 func CopeFile(dstFilename string, srcFilename string)(written int64, err error) {
     srcFile, err := os.Open(srcFilename)
     if err != nil{
@@ -1407,9 +1499,9 @@ func CopeFile(dstFilename string, srcFilename string)(written int64, err error) 
     return io.Copy(writer, reader)
 }
 
-//transform to Chinese
+**transform to Chinese
 str = []rune(str)
 
-//os.Args get the command line arguments
-//flag package to parse the command line arguments
+**os.Args get the command line arguments
+**flag package to parse the command line arguments
 ~~~
